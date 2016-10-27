@@ -19,9 +19,22 @@ const app = express();
 // security
 app.use(helmet());
 
+const whitelist = [
+  'http://localhost:4200',
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+    callback(null, originIsWhitelisted);
+  },
+  credentials: true
+};
+app.use(cors(corsOptions));
+
 // setup the logger
 const logPath = path.relative(process.cwd(), 'access.log');
-const accessLogStream = fs.createWriteStream(logPath, {flags: 'a'})
+const accessLogStream = fs.createWriteStream(logPath, {flags: 'a'});
 const context = {
   hello: 'Default hello'
 };
